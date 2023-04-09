@@ -45,10 +45,14 @@ func main() {
 	}
 
 	sheetsRepo := gsheets.NewRepository(*srv)
-	invoiceService := invoice.NewService(sheetsRepo) // check on value and pointer once
+	invoiceService := invoice.NewService(sheetsRepo)
 	reporter := reporter.NewReporter(invoiceService)
 
-	finalTxn := reporter.GetTaxReportOfMonth(time.March, 2023)
-	fmt.Printf("\n %+v \n", finalTxn)
-	
+	taxReport := reporter.GetTaxReportOfMonth(time.January, 2023)
+	fmt.Printf("\n %+v \n", taxReport)
+	spreadsheetId := "192CsSjGPrkxFkoUTg5_TrQIB8tez_UgiH5XHgA7ITKA"
+	sheetsRepo.AddNewWorksheet(spreadsheetId, "JANUARY 2023", 202301)
+	values := reporter.GetSheetValuesToPublishReport(taxReport)
+
+	sheetsRepo.WriteToSheet(spreadsheetId, "JANUARY 2023", values)
 }

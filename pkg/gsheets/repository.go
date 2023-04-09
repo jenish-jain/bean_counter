@@ -3,10 +3,13 @@ package gsheets
 import (
 	"fmt"
 	"google.golang.org/api/sheets/v4"
+	"log"
 )
 
 type Repository interface {
 	GetAllRecords(spreadSheetID string, sheetID int) [][]interface{}
+	AddNewWorksheet(spreadSheetID string, sheetName string, sheetID int64) bool
+	WriteToSheet(spreadSheetID string, sheetName string, values [][]interface{})
 }
 
 type repositoryImpl struct {
@@ -23,6 +26,42 @@ func (r repositoryImpl) GetAllRecords(spreadSheetID string, sheetID int) [][]int
 	}
 
 	return response.Values
+}
+
+func (r repositoryImpl) AddNewWorksheet(spreadSheetID string, sheetName string, sheetID int64) bool {
+	sheetReq := sheets.Request{
+		AddSheet: &sheets.AddSheetRequest{
+			Properties: &sheets.SheetProperties{
+				Title:   sheetName,
+				SheetId: sheetID,
+			},
+		},
+	}
+	batchRequest := sheets.BatchUpdateSpreadsheetRequest{
+		IncludeSpreadsheetInResponse: true,
+		Requests:                     []*sheets.Request{&sheetReq},
+	}
+	resp, err := r.service.Spreadsheets.BatchUpdate(spreadSheetID, &batchRequest).Do()
+	if err != nil {
+		fmt.Errorf("error creating new worksheet for spreadSheetID : %s , error : %+v", spreadSheetID, err)
+		return false
+	}
+	fmt.Printf("successfully created new worksheet for spreadSheetID : %s , response : %+v", spreadSheetID, resp)
+	return true
+}
+
+func (r repositoryImpl) WriteToSheet(spreadSheetID string, sheetName string, values [][]interface{}) {
+	row := &sheets.ValueRange{
+		Values: values,
+	}
+	range_ := fmt.Sprintf("%s!A1", sheetName)
+
+	_, err := r.service.Spreadsheets.Values.
+		Update(spreadSheetID, range_, row).
+		ValueInputOption("USER_ENTERED").Do()
+	if err != nil {
+		log.Fatalf("%+v", err)
+	}
 }
 
 func (r repositoryImpl) getSheetName(spreadSheetID string, sheetID int) string {
