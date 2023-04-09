@@ -4,15 +4,16 @@ import (
 	"bean_counter/internal/types/invoice"
 	"bean_counter/internal/types/tax"
 	"bean_counter/internal/types/transaction"
-	"fmt"
+	"context"
 	"time"
 )
 
 type Reporter interface {
-	MonthlyReporter(month time.Month, year int, purchases []invoice.Invoice, sales []transaction.Transaction) transaction.Transaction
+	GetTaxReportOfMonth(month time.Month, year int) taxReport
 }
 
 type reporterImpl struct {
+	invoiceService invoice.Service
 }
 
 type stateTax struct {
@@ -30,19 +31,42 @@ type taxReport struct {
 	StateTaxBreakup []stateTax
 }
 
-func (r reporterImpl) MonthlyReporter(month time.Month, year int, purchases []invoice.Invoice, sales []transaction.Transaction) transaction.Transaction {
-	var totalPurchase transaction.Transaction
+func (r reporterImpl) GetTaxReportOfMonth(month time.Month, year int) taxReport {
+	ctx := context.Background()
+	purchases := r.invoiceService.GetAllPurchaseInvoices(ctx)
+	sales := r.invoiceService.GetAllSalesInvoices(ctx)
+
+	var purchasesOfMonth transaction.Transaction
+	var salesOfMonth transaction.Transaction
 	for _, purchaseInvoice := range purchases {
-		// make a method for this add transaction
 		if purchaseInvoice.GetDate().Month() == month && purchaseInvoice.GetDate().Year() == year {
-			totalPurchase = totalPurchase.Add(purchaseInvoice.GetTransaction())
+			purchasesOfMonth = purchasesOfMonth.Add(purchaseInvoice.GetTransaction())
 		}
 	}
-	println("TOTAL PURCHASE AMOUNT")
-	fmt.Printf("FINAL VAL %f \n", totalPurchase.TaxableAmount)
-	return totalPurchase
+	for _, salesInvoice := range sales {
+		if salesInvoice.GetDate().Month() == month && salesInvoice.GetDate().Year() == year {
+			salesOfMonth = salesOfMonth.Add(salesInvoice.GetTransaction())
+		}
+	}
+	report := populateTaxReport(purchasesOfMonth, salesOfMonth)
+	return report
+
 }
 
-func NewReporter() Reporter {
-	return &reporterImpl{}
+func populateTaxReport(totalPurchase transaction.Transaction, totalSales transaction.Transaction) taxReport {
+	report := taxReport{
+		TotalPurchases:  totalPurchase,
+		TotalSales:      totalSales,
+		TotalInputTax:   totalPurchase.Tax.GetTotalTax(),
+		TotalPayableTax: totalSales.Tax.GetTotalTax(),
+	}
+	report.NetTax = report.TotalInputTax - report.TotalPayableTax
+	// check on state tax report
+	return report
+}
+
+func NewReporter(invoiceService invoice.Service) Reporter {
+	return &reporterImpl{
+		invoiceService: invoiceService,
+	}
 }

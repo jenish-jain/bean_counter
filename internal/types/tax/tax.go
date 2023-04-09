@@ -37,6 +37,7 @@ func (t1 Tax) GetIGST() float64 {
 	return t1.igst
 }
 
+// Add : sum tax object t1 and t2
 func (t1 Tax) Add(t2 Tax) Tax {
 	return Tax{
 		cgst:  t1.cgst + t2.cgst,
@@ -46,6 +47,7 @@ func (t1 Tax) Add(t2 Tax) Tax {
 	}
 }
 
+// Subtract : subtracts tax object t1 from t2
 func (t1 Tax) Subtract(t2 Tax) Tax {
 	return Tax{
 		cgst:  t1.cgst - t2.cgst,

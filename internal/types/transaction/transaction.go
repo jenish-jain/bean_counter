@@ -27,6 +27,7 @@ func New(taxableAmount float64, tax tax.Tax) Transaction {
 	}
 }
 
+// Add : adds transaction t1 with t2
 func (t1 Transaction) Add(t2 Transaction) Transaction {
 	//if t1.Type == t2.Type {
 	return Transaction{

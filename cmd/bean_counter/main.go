@@ -3,7 +3,7 @@ package main
 import (
 	"bean_counter/internal/reporter"
 	"bean_counter/internal/types/invoice"
-	"bean_counter/internal/types/transaction"
+	"bean_counter/pkg/gsheets"
 	"context"
 	"encoding/base64"
 	"fmt"
@@ -44,11 +44,11 @@ func main() {
 		return
 	}
 
-	invoiceRepository := invoice.NewRepository(srv)
-	reporter := reporter.NewReporter()
+	sheetsRepo := gsheets.NewRepository(*srv)
+	invoiceService := invoice.NewService(sheetsRepo) // check on value and pointer once
+	reporter := reporter.NewReporter(invoiceService)
 
-	var totalPurchase []transaction.Transaction
-	purchases := invoiceRepository.GetAllPurchaseInvoices(ctx)
-	finalTxn := reporter.MonthlyReporter(time.March, 2023, purchases, totalPurchase)
-	fmt.Println(finalTxn)
+	finalTxn := reporter.GetTaxReportOfMonth(time.March, 2023)
+	fmt.Printf("\n %+v \n", finalTxn)
+	
 }

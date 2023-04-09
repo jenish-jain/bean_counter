@@ -3,54 +3,47 @@ package invoice
 import (
 	"bean_counter/internal/types/tax"
 	"bean_counter/internal/types/transaction"
+	"bean_counter/pkg/gsheets"
 	"context"
 	"fmt"
-	"google.golang.org/api/sheets/v4"
 	"strconv"
 	"time"
 )
 
-type Repository interface {
-	getAllPurchases()
+type Service interface {
+	GetAllPurchaseInvoices(ctx context.Context) []Invoice
+	GetAllSalesInvoices(ctx context.Context) []Invoice
 }
 
-type repositoryImpl struct {
-	service *sheets.Service
+type serviceImpl struct {
+	repository gsheets.Repository
 }
 
-func (r repositoryImpl) GetAllPurchaseInvoices(ctx context.Context) []Invoice {
+func (s serviceImpl) GetAllPurchaseInvoices(ctx context.Context) []Invoice {
 	// https://docs.google.com/spreadsheets/d/<SPREADSHEETID>/edit#gid=<SHEETID>
 	sheetId := 0
 	spreadsheetId := "1PyN1aHbYWM8d0gUWKdXCZCpNq8SJnG1B_LeMJ1Pcafw"
 
-	// Convert sheet ID to sheet name.
-	response1, err := r.service.Spreadsheets.
-		Get(spreadsheetId).
-		Fields("sheets(properties(sheetId,title))").
-		Do()
-	if err != nil || response1.HTTPStatusCode != 200 {
-		fmt.Println(err) //panic
-	}
-
-	sheetName := ""
-	for _, v := range response1.Sheets {
-		prop := v.Properties
-		if prop.SheetId == int64(sheetId) {
-			sheetName = prop.Title
-			break
-		}
-	}
-
-	response, err := r.service.Spreadsheets.Values.
-		Get(spreadsheetId, sheetName).
-		Context(ctx).Do()
-	if err != nil || response.HTTPStatusCode != 200 {
-		fmt.Println(err) //panic
-		//return
-	}
+	offlineSalesRecords := s.repository.GetAllRecords(spreadsheetId, sheetId)
 	var purchaseInvoices []Invoice
 
-	for index, row := range response.Values {
+	for index, row := range offlineSalesRecords {
+		if index > 0 {
+			invoice := getInvoiceFromRow(row)
+			purchaseInvoices = append(purchaseInvoices, invoice)
+		}
+	}
+	return purchaseInvoices
+
+}
+
+func (s serviceImpl) GetAllSalesInvoices(ctx context.Context) []Invoice {
+	sheetId := 0
+	spreadsheetId := "192CsSjGPrkxFkoUTg5_TrQIB8tez_UgiH5XHgA7ITKA"
+
+	offlinePurchaseRecords := s.repository.GetAllRecords(spreadsheetId, sheetId)
+	var purchaseInvoices []Invoice
+	for index, row := range offlinePurchaseRecords {
 		if index > 0 {
 			invoice := getInvoiceFromRow(row)
 			purchaseInvoices = append(purchaseInvoices, invoice)
@@ -86,8 +79,8 @@ func parseFloat(val string) float64 {
 	return output
 }
 
-func NewRepository(service *sheets.Service) repositoryImpl {
-	return repositoryImpl{
-		service: service,
+func NewService(repository gsheets.Repository) Service {
+	return &serviceImpl{
+		repository: repository,
 	}
 }
