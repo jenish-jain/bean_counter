@@ -48,11 +48,14 @@ func main() {
 	invoiceService := invoice.NewService(sheetsRepo)
 	reporter := reporter.NewReporter(invoiceService)
 
-	taxReport := reporter.GetTaxReportOfMonth(time.January, 2023)
+	month := time.March
+	year := 2023
+	sheetName := fmt.Sprintf("%s %d", month, year)
+	taxReport := reporter.GetTaxReportOfMonth(month, year)
 	fmt.Printf("\n %+v \n", taxReport)
 	spreadsheetId := "192CsSjGPrkxFkoUTg5_TrQIB8tez_UgiH5XHgA7ITKA"
-	sheetsRepo.AddNewWorksheet(spreadsheetId, "JANUARY 2023", 202301)
-	values := reporter.GetSheetValuesToPublishReport(taxReport)
+	sheetsRepo.AddNewWorksheet(spreadsheetId, sheetName)
+	values := reporter.GetSheetValuesToPublishReport(taxReport, month, year)
 
-	sheetsRepo.WriteToSheet(spreadsheetId, "JANUARY 2023", values)
+	sheetsRepo.WriteToSheet(spreadsheetId, sheetName, values)
 }

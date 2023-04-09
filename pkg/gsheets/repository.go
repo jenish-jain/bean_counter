@@ -8,7 +8,7 @@ import (
 
 type Repository interface {
 	GetAllRecords(spreadSheetID string, sheetID int) [][]interface{}
-	AddNewWorksheet(spreadSheetID string, sheetName string, sheetID int64) bool
+	AddNewWorksheet(spreadSheetID string, sheetName string) bool
 	WriteToSheet(spreadSheetID string, sheetName string, values [][]interface{})
 }
 
@@ -28,12 +28,12 @@ func (r repositoryImpl) GetAllRecords(spreadSheetID string, sheetID int) [][]int
 	return response.Values
 }
 
-func (r repositoryImpl) AddNewWorksheet(spreadSheetID string, sheetName string, sheetID int64) bool {
+func (r repositoryImpl) AddNewWorksheet(spreadSheetID string, sheetName string) bool {
 	sheetReq := sheets.Request{
 		AddSheet: &sheets.AddSheetRequest{
 			Properties: &sheets.SheetProperties{
-				Title:   sheetName,
-				SheetId: sheetID,
+				Title: sheetName,
+				//SheetId: sheetID,
 			},
 		},
 	}

@@ -11,7 +11,7 @@ import (
 
 type Reporter interface {
 	GetTaxReportOfMonth(month time.Month, year int) taxReport
-	GetSheetValuesToPublishReport(taxReport taxReport) [][]interface{}
+	GetSheetValuesToPublishReport(taxReport taxReport, month time.Month, year int) [][]interface{}
 }
 
 type reporterImpl struct {
@@ -71,12 +71,12 @@ func populateTaxReport(totalPurchase transaction.Transaction, totalSales transac
 	return report
 }
 
-func (r reporterImpl) GetSheetValuesToPublishReport(taxReport taxReport) [][]interface{} {
+func (r reporterImpl) GetSheetValuesToPublishReport(taxReport taxReport, month time.Month, year int) [][]interface{} {
 	values := [][]interface{}{
 		{"GSTIN", "GSTNO"},
 		{"Name", "Padamchand Jain c/o Jainco Textile"},
 		{},
-		{"Month", fmt.Sprintf("%s %d", "MARCH", 2023)},
+		{"Month", fmt.Sprintf("%s %d", month, year)},
 		{},
 		{"A )", "Purchases"},
 		{},
