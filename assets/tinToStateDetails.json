@@ -33,7 +33,7 @@
   "19": {"stateName":"West Bengal",   "stateCode":"WB"},
   "35": { "stateName":"Andaman and Nicobar Islands",  "stateCode" :"AN"},
   "04": { "stateName":"Chandigarh",   "stateCode" :"CH"},
-  "26": { "stateName":"Dadra & Nagar Haveli and Daman & Diu",     "stateCode" :"DNHDD"},
+  "26": { "stateName":"Dadra & Nagar Haveli and Daman & Diu",  "stateCode" :"DNHDD"},
   "38": { "stateName":"Ladakh",   "stateCode" :"LA"},
   "97": { "stateName":"Other Territory",  "stateCode" :"OT"}
 }
