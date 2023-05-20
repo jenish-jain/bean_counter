@@ -1,4 +1,4 @@
-FROM golang:1.19
+FROM golang:1.19-alpine as builder
 
 WORKDIR /app
 
@@ -12,7 +12,13 @@ RUN go mod download
 # Copy local code to the container image.
 COPY . ./
 
-RUN go build cmd/bean_counter/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" cmd/bean_counter/main.go
+
+FROM scratch
+
+WORKDIR /app
+
+COPY --from=builder /app/main main
 
 EXPOSE 8080
 
