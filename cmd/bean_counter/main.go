@@ -7,15 +7,20 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"github.com/joho/godotenv"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
+	"log"
 	"os"
 	"time"
 )
 
 func main() {
 
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found")
+	}
 	// create api context
 	ctx := context.Background()
 
