@@ -87,6 +87,13 @@ jobs:
         with:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
+          secrets: |
+            KEY_JSON_BASE64=google-jwt-token-spreadsheet:latest
+            PURCHASE_SPREADSHEET_ID=beancounter-PURCHASE_SPREADSHEET_ID:latest
+            PURCHASE_SHEET_ID=beancounter-PURCHASE_SHEET_ID:latest
+            SALES_SPREADSHEET_ID=beancounter-SALES_SPREADSHEET_ID:latest
+            SALES_SHEET_ID=beancounter-SALES_SHEET_ID:latest
+            REPORTER_SPREADSHEET_ID=beancounter-REPORTER_SPREADSHEET_ID:latest
           # NOTE: If required, update to the appropriate source folder
           source: ./
 
