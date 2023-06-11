@@ -181,19 +181,23 @@ func (r reporterImpl) GetSheetValuesToPublishReport(taxReport taxReport, month t
 	tinToStateDetailsMap := getTinToStateDetailsMap()
 	stateTaxBlock := [][]interface{}{
 		{"G )", "Total payable tax as per following states"},
+		{},
 		{"sr no.", "Name of state", "I.G.S.T", "C.G.S.T", "S.G.S.T", "Total Tax"},
 		{},
 	}
 	for stateCode, taxBreakup := range taxReport.StateTaxBreakup {
-		//fmt.Println(stateCode, taxBreakup.PayableTax.GetTotalTax())
 		var stateEntry []interface{}
-		if stateCode != "**" {
-			purchaseTax := taxBreakup.TaxOnPurchase
-			stateEntry = append(stateEntry, nil, tinToStateDetailsMap[stateCode].StateName, purchaseTax.GetIGST(), purchaseTax.GetCGST(), purchaseTax.GetSGST(), purchaseTax.GetTotalTax())
+		payableTax := taxBreakup.PayableTax
+		if stateCode != "**" && payableTax.GetTotalTax() != 0 {
+			stateEntry = append(stateEntry, nil, tinToStateDetailsMap[stateCode].StateName, payableTax.GetIGST(), payableTax.GetCGST(), payableTax.GetSGST(), payableTax.GetTotalTax())
 			stateTaxBlock = append(stateTaxBlock, stateEntry)
 		}
-
 	}
+	totalSalesTax := taxReport.TotalSales.Tax
+	stateTaxBlock = append(stateTaxBlock,
+		[]interface{}{},
+		[]interface{}{nil, "TOTAL", totalSalesTax.GetIGST(), totalSalesTax.GetCGST(), totalSalesTax.GetSGST(), totalSalesTax.GetTotalTax()})
+
 	values = append(values, stateTaxBlock...)
 
 	return values

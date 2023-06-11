@@ -30,7 +30,7 @@ func (s serviceImpl) GetAllPurchaseInvoices(ctx context.Context) []Invoice {
 
 	for index, row := range offlineSalesRecords {
 		if index > 0 {
-			invoice := getInvoiceFromRow(row)
+			invoice := getInvoiceFromRow(row, Purchase)
 			purchaseInvoices = append(purchaseInvoices, invoice)
 		}
 	}
@@ -46,7 +46,7 @@ func (s serviceImpl) GetAllSalesInvoices(ctx context.Context) []Invoice {
 	var purchaseInvoices []Invoice
 	for index, row := range offlinePurchaseRecords {
 		if index > 0 {
-			invoice := getInvoiceFromRow(row)
+			invoice := getInvoiceFromRow(row, Sales)
 			purchaseInvoices = append(purchaseInvoices, invoice)
 		}
 	}
@@ -54,7 +54,7 @@ func (s serviceImpl) GetAllSalesInvoices(ctx context.Context) []Invoice {
 
 }
 
-func getInvoiceFromRow(row []interface{}) Invoice {
+func getInvoiceFromRow(row []interface{}, transactionType invoiceType) Invoice {
 	totalAmount := parseFloat(fmt.Sprintf("%s", row[6]))
 	invoiceDate, _ := time.Parse("2006-01-02", fmt.Sprintf("%s", row[1]))
 	invoiceNo := fmt.Sprintf("%s", row[2])
@@ -65,7 +65,7 @@ func getInvoiceFromRow(row []interface{}) Invoice {
 	igst := parseFloat(fmt.Sprintf("%s", row[9]))
 
 	invoiceTransaction := transaction.New(totalAmount, tax.New(cgst, sgst, igst))
-	invoice := New(Purchase, invoiceDate, invoiceNo, partyName, gstNo, invoiceTransaction, "offline")
+	invoice := New(transactionType, invoiceDate, invoiceNo, partyName, gstNo, invoiceTransaction, "offline")
 	return invoice
 }
 
