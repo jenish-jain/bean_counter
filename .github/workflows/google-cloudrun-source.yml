@@ -52,7 +52,7 @@ on:
 
 env:
   PROJECT_ID: realm-asgard # TODO: update Google Cloud project id
-  SERVICE: bean_counter # TODO: update Cloud Run service name
+  SERVICE: bean-counter # TODO: update Cloud Run service name
   REGION: us-central1 # TODO: update Cloud Run service region
 
 jobs:
