@@ -4,10 +4,11 @@ import (
 	"bean_counter/internal/types/invoice"
 	"bean_counter/internal/types/tax"
 	"bean_counter/internal/types/transaction"
+	"bean_counter/pkg/files"
 	"context"
+	"embed"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -80,13 +81,12 @@ func (r reporterImpl) GetTaxReportOfMonth(month time.Month, year int) taxReport 
 
 }
 
+//go:embed assets/*
+var res embed.FS
+
 func getTinToStateDetailsMap() map[string]stateDetails {
 	var tinToStateDetailsMap map[string]stateDetails
-	jsonFile, err := os.Open("assets/tinToStateDetails.json")
-	if err != nil {
-		fmt.Println(err)
-	}
-	byteValue, _ := ioutil.ReadAll(jsonFile)
+	byteValue := files.GetAll(res, "assets/tinToStateDetails.json")
 	json.Unmarshal(byteValue, &tinToStateDetailsMap)
 	return tinToStateDetailsMap
 }
