@@ -122,7 +122,7 @@ func populateTaxReport(totalPurchase transaction.Transaction, totalSales transac
 
 func (r reporterImpl) GetSheetValuesToPublishReport(taxReport taxReport, month time.Month, year int) [][]interface{} {
 	values := [][]interface{}{
-		{"GSTIN", "GSTNO"},
+		{"GSTIN", "24ABWPJ2263R1ZW"},
 		{"Name", "Padamchand Jain c/o Jainco Textile"},
 		{},
 		{"Month", fmt.Sprintf("%s %d", month, year)},
