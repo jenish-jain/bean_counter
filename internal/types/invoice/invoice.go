@@ -41,3 +41,11 @@ func (i Invoice) GetTransaction() transaction.Transaction {
 func (i Invoice) GetDate() time.Time {
 	return i.date
 }
+
+func (i Invoice) GetGstNo() string {
+	return i.gstNo
+}
+
+func (i Invoice) GetInvoiceType() invoiceType {
+	return i.invoiceType
+}

@@ -33,7 +33,7 @@ func main() {
 		log.Printf("Defaulting to port %s", port)
 	}
 	// Start HTTP server.
-	log.Printf("Listening on port %s", port)
+	log.Printf("Listening on port %s\n", port)
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)
 	}
@@ -97,7 +97,7 @@ func generateMonthlyGstReport(w http.ResponseWriter, r *http.Request) {
 	year := req.Year
 	sheetName := fmt.Sprintf("%s %d", month, year)
 	taxReport := reporter.GetTaxReportOfMonth(month, year)
-	spreadsheetId := os.Getenv("SPREADSHEET_ID")
+	spreadsheetId := os.Getenv("REPORTER_SPREADSHEET_ID")
 	sheetsRepo.AddNewWorksheet(spreadsheetId, sheetName)
 	values := reporter.GetSheetValuesToPublishReport(taxReport, month, year)
 

@@ -6,6 +6,7 @@ import (
 	"bean_counter/pkg/gsheets"
 	"context"
 	"fmt"
+	"os"
 	"strconv"
 	"time"
 )
@@ -21,8 +22,8 @@ type serviceImpl struct {
 
 func (s serviceImpl) GetAllPurchaseInvoices(ctx context.Context) []Invoice {
 	// https://docs.google.com/spreadsheets/d/<SPREADSHEETID>/edit#gid=<SHEETID>
-	sheetId := 0
-	spreadsheetId := "1PyN1aHbYWM8d0gUWKdXCZCpNq8SJnG1B_LeMJ1Pcafw"
+	sheetId, _ := strconv.Atoi(os.Getenv("PURCHASE_SHEET_ID"))
+	spreadsheetId := os.Getenv("PURCHASE_SPREADSHEET_ID")
 
 	offlineSalesRecords := s.repository.GetAllRecords(spreadsheetId, sheetId)
 	var purchaseInvoices []Invoice
@@ -38,8 +39,8 @@ func (s serviceImpl) GetAllPurchaseInvoices(ctx context.Context) []Invoice {
 }
 
 func (s serviceImpl) GetAllSalesInvoices(ctx context.Context) []Invoice {
-	sheetId := 0
-	spreadsheetId := "192CsSjGPrkxFkoUTg5_TrQIB8tez_UgiH5XHgA7ITKA"
+	sheetId, _ := strconv.Atoi(os.Getenv("SALES_SHEET_ID"))
+	spreadsheetId := os.Getenv("SALES_SPREADSHEET_ID")
 
 	offlinePurchaseRecords := s.repository.GetAllRecords(spreadsheetId, sheetId)
 	var purchaseInvoices []Invoice
