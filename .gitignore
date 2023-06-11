@@ -1,2 +1,5 @@
 .idea
 .env
+main
+register_wif.md
+report.json
