@@ -22,10 +22,10 @@ type serviceImpl struct {
 
 func (s serviceImpl) GetAllPurchaseInvoices(ctx context.Context) []Invoice {
 	// https://docs.google.com/spreadsheets/d/<SPREADSHEETID>/edit#gid=<SHEETID>
-	sheetId, _ := strconv.Atoi(os.Getenv("PURCHASE_SHEET_ID"))
-	spreadsheetId := os.Getenv("PURCHASE_SPREADSHEET_ID")
+	sheetID, _ := strconv.Atoi(os.Getenv("PURCHASE_SHEET_ID"))
+	spreadsheetID := os.Getenv("PURCHASE_SPREADSHEET_ID")
 
-	offlineSalesRecords := s.repository.GetAllRecords(spreadsheetId, sheetId)
+	offlineSalesRecords := s.repository.GetAllRecords(spreadsheetID, sheetID)
 	var purchaseInvoices []Invoice
 
 	for index, row := range offlineSalesRecords {
@@ -39,10 +39,10 @@ func (s serviceImpl) GetAllPurchaseInvoices(ctx context.Context) []Invoice {
 }
 
 func (s serviceImpl) GetAllSalesInvoices(ctx context.Context) []Invoice {
-	sheetId, _ := strconv.Atoi(os.Getenv("SALES_SHEET_ID"))
-	spreadsheetId := os.Getenv("SALES_SPREADSHEET_ID")
+	sheetID, _ := strconv.Atoi(os.Getenv("SALES_SHEET_ID"))
+	spreadsheetID := os.Getenv("SALES_SPREADSHEET_ID")
 
-	offlinePurchaseRecords := s.repository.GetAllRecords(spreadsheetId, sheetId)
+	offlinePurchaseRecords := s.repository.GetAllRecords(spreadsheetID, sheetID)
 	var purchaseInvoices []Invoice
 	for index, row := range offlinePurchaseRecords {
 		if index > 0 {
@@ -54,7 +54,7 @@ func (s serviceImpl) GetAllSalesInvoices(ctx context.Context) []Invoice {
 
 }
 
-func getInvoiceFromRow(row []interface{}, transactionType invoiceType) Invoice {
+func getInvoiceFromRow(row []interface{}, transactionType Type) Invoice {
 	totalAmount := parseFloat(fmt.Sprintf("%s", row[6]))
 	invoiceDate, _ := time.Parse("2006-01-02", fmt.Sprintf("%s", row[1]))
 	invoiceNo := fmt.Sprintf("%s", row[2])

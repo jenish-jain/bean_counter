@@ -50,7 +50,6 @@ func generateMonthlyGstReport(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		fmt.Printf("Error reading body err : %+v \n", err)
-		//TODO: CLEANUPS
 		return
 	}
 	err = json.Unmarshal(body, &req)
@@ -97,11 +96,11 @@ func generateMonthlyGstReport(w http.ResponseWriter, r *http.Request) {
 	year := req.Year
 	sheetName := fmt.Sprintf("%s %d", month, year)
 	taxReport := reporter.GetTaxReportOfMonth(month, year)
-	spreadsheetId := os.Getenv("REPORTER_SPREADSHEET_ID")
-	sheetsRepo.AddNewWorksheet(spreadsheetId, sheetName)
+	spreadsheetID := os.Getenv("REPORTER_SPREADSHEET_ID")
+	sheetsRepo.AddNewWorksheet(spreadsheetID, sheetName)
 	values := reporter.GetSheetValuesToPublishReport(taxReport, month, year)
 
-	sheetsRepo.WriteToSheet(spreadsheetId, sheetName, values)
+	sheetsRepo.WriteToSheet(spreadsheetID, sheetName, values)
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintf(w, "report generated successfully")
 	return

@@ -116,7 +116,6 @@ func populateTaxReport(totalPurchase transaction.Transaction, totalSales transac
 		TotalPayableTax: totalSales.Tax.GetTotalTax(),
 	}
 	report.NetTax = report.TotalInputTax - report.TotalPayableTax
-	// check on state tax report
 	return report
 }
 

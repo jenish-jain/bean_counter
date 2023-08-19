@@ -5,47 +5,47 @@ import (
 	"time"
 )
 
-type invoiceType string
+type Type string
 
 const (
-	Purchase invoiceType = "Purchase"
-	Sales    invoiceType = "Sales"
+	Purchase Type = "Purchase"
+	Sales    Type = "Sales"
 )
 
 type Invoice struct {
-	invoiceType invoiceType             `json:"invoiceType"`
-	date        time.Time               `json:"date"`
-	invoiceNo   string                  `json:"invoiceNumber"`
-	partyName   string                  `json:"partyName"`
-	gstNo       string                  `json:"gstNumber"`
-	transaction transaction.Transaction `json:"transaction"`
-	tag         string                  `json:"tag"`
+	InvoiceType Type                    `json:"invoiceType"`
+	Date        time.Time               `json:"date"`
+	InvoiceNo   string                  `json:"invoiceNumber"`
+	PartyName   string                  `json:"partyName"`
+	GstNo       string                  `json:"gstNumber"`
+	Transaction transaction.Transaction `json:"transaction"`
+	Tag         string                  `json:"tag"`
 }
 
-func New(invoiceType invoiceType, date time.Time, invoiceNo string, partyName string, gst string, transaction transaction.Transaction, tag string) Invoice {
+func New(invoiceType Type, date time.Time, invoiceNo string, partyName string, gst string, transaction transaction.Transaction, tag string) Invoice {
 	return Invoice{
-		invoiceType: invoiceType,
-		date:        date,
-		invoiceNo:   invoiceNo,
-		partyName:   partyName,
-		gstNo:       gst,
-		transaction: transaction,
-		tag:         tag,
+		InvoiceType: invoiceType,
+		Date:        date,
+		InvoiceNo:   invoiceNo,
+		PartyName:   partyName,
+		GstNo:       gst,
+		Transaction: transaction,
+		Tag:         tag,
 	}
 }
 
 func (i Invoice) GetTransaction() transaction.Transaction {
-	return i.transaction
+	return i.Transaction
 }
 
 func (i Invoice) GetDate() time.Time {
-	return i.date
+	return i.Date
 }
 
 func (i Invoice) GetGstNo() string {
-	return i.gstNo
+	return i.GstNo
 }
 
-func (i Invoice) GetInvoiceType() invoiceType {
-	return i.invoiceType
+func (i Invoice) GetInvoiceType() Type {
+	return i.InvoiceType
 }
