@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"time"
+	_ "time/tzdata"
 )
 
 func ParseMDYYYYToDate(dateString string) time.Time {
