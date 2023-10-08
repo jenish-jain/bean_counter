@@ -10,6 +10,14 @@ export PROJECT_ID="realm-asgard"
 export REPO="jenish-jain/bean_counter"
 
 export SERVICE_ACCOUNT_ID="cloud-function-deployer"
+# Roles required by SA #
+# Cloud Functions Developer
+# Cloud Functions Service Agent
+# Secret Manager Secret Accessor
+# Service Account Token Creator
+# Service Account User
+# Storage Admin
+# Workload Identity User
 
 gcloud iam service-accounts create "${SERVICE_ACCOUNT_ID}" \
   --project "${PROJECT_ID}"
