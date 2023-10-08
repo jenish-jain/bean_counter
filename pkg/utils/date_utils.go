@@ -16,6 +16,14 @@ func ParseMDYYYYToDate(dateString string) time.Time {
 	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, asiaKolkataTimeZone())
 }
 
+func GetPreviousMonth() time.Month {
+	return time.Now().In(asiaKolkataTimeZone()).Month() - 1
+}
+
+func GetCurrentYear() int {
+	return time.Now().In(asiaKolkataTimeZone()).Year()
+}
+
 func asiaKolkataTimeZone() *time.Location {
 	location, err := time.LoadLocation("Asia/Kolkata")
 	if err != nil {
