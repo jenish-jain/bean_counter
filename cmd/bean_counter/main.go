@@ -4,6 +4,7 @@ import (
 	"bean_counter/internal/reporter"
 	"bean_counter/internal/types/invoice"
 	"bean_counter/pkg/gsheets"
+	"bean_counter/pkg/utils"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -42,8 +43,8 @@ func main() {
 func generateMonthlyGstReport(w http.ResponseWriter, r *http.Request) {
 
 	type request struct {
-		Month time.Month `json:"month"`
-		Year  int        `json:"year"`
+		Month time.Month `json:"month,omitempty"`
+		Year  int        `json:"year,omitempty"`
 	}
 
 	var req request
@@ -92,8 +93,8 @@ func generateMonthlyGstReport(w http.ResponseWriter, r *http.Request) {
 	invoiceService := invoice.NewService(sheetsRepo)
 	reporter := reporter.NewReporter(invoiceService)
 
-	month := req.Month
-	year := req.Year
+	month := getMonth(req.Month)
+	year := getYear(req.Year, month)
 	sheetName := fmt.Sprintf("%s %d", month, year)
 	taxReport := reporter.GetTaxReportOfMonth(month, year)
 	spreadsheetID := os.Getenv("REPORTER_SPREADSHEET_ID")
@@ -104,4 +105,22 @@ func generateMonthlyGstReport(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintf(w, "report generated successfully")
 	return
+}
+
+func getMonth(reqMonth time.Month) time.Month {
+	if reqMonth != 0 {
+		return reqMonth
+	}
+	return utils.GetPreviousMonth()
+}
+
+func getYear(reqYear int, month time.Month) int {
+	if reqYear != 0 {
+		return reqYear
+	}
+	year := utils.GetCurrentYear()
+	if month == time.December { // for requests of january we need to generate reports of december last year
+		return year - 1
+	}
+	return year
 }
