@@ -43,7 +43,7 @@ func (r repositoryImpl) AddNewWorksheet(spreadSheetID string, sheetName string) 
 	}
 	resp, err := r.service.Spreadsheets.BatchUpdate(spreadSheetID, &batchRequest).Do()
 	if err != nil {
-		fmt.Errorf("error creating new worksheet for spreadSheetID : %s , error : %+v", spreadSheetID, err)
+		fmt.Printf("error creating new worksheet for spreadSheetID : %s , error : %+v \n", spreadSheetID, err)
 		return false
 	}
 	fmt.Printf("successfully created new worksheet for spreadSheetID : %s , response : %+v", spreadSheetID, resp)
