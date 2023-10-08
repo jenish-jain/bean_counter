@@ -27,7 +27,7 @@ func GetCurrentYear() int {
 func asiaKolkataTimeZone() *time.Location {
 	location, err := time.LoadLocation("Asia/Kolkata")
 	if err != nil {
-		fmt.Printf("Error getting asia/kolkata location")
+		fmt.Printf("Error getting asia/kolkata location %+v \n", err)
 		panic("unable to load asia kolkata location")
 	}
 
