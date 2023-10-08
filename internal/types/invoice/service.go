@@ -4,11 +4,11 @@ import (
 	"bean_counter/internal/types/tax"
 	"bean_counter/internal/types/transaction"
 	"bean_counter/pkg/gsheets"
+	"bean_counter/pkg/utils"
 	"context"
 	"fmt"
 	"os"
 	"strconv"
-	"time"
 )
 
 type Service interface {
@@ -56,7 +56,7 @@ func (s serviceImpl) GetAllSalesInvoices(ctx context.Context) []Invoice {
 
 func getInvoiceFromRow(row []interface{}, transactionType Type) Invoice {
 	totalAmount := parseFloat(fmt.Sprintf("%s", row[6]))
-	invoiceDate, _ := time.Parse("2006-01-02", fmt.Sprintf("%s", row[1]))
+	invoiceDate := utils.ParseMDYYYYToDate(fmt.Sprintf("%s", row[1]))
 	invoiceNo := fmt.Sprintf("%s", row[2])
 	partyName := fmt.Sprintf("%s", row[3])
 	gstNo := fmt.Sprintf("%s", row[5])
