@@ -18,7 +18,12 @@ func ParseMDYYYYToDate(dateString string) time.Time {
 }
 
 func GetPreviousMonth() time.Month {
-	return time.Now().In(asiaKolkataTimeZone()).Month() - 1
+	currentMonth := time.Now().In(asiaKolkataTimeZone()).Month()
+	if currentMonth == time.January {
+		return time.December
+	} else {
+		return currentMonth - 1
+	}
 }
 
 func GetCurrentYear() int {
