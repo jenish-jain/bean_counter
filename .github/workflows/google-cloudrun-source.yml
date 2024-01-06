@@ -64,6 +64,7 @@ env:
 
 jobs:
   deploy:
+    environment: production
     # Add 'id-token' with the intended permissions for workload identity federation
     permissions:
       contents: 'read'
@@ -92,7 +93,6 @@ jobs:
         id: deploy
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          environment: production
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
           env_vars: |
