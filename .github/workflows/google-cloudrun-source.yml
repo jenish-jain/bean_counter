@@ -95,6 +95,14 @@ jobs:
           environment: production
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
+          env_vars: |
+            PORT= ${{ env.PORT }}
+            KEY_JSON_BASE64= ${{ env.KEY_JSON_BASE64 }}
+            PURCHASE_SPREADSHEET_ID= ${{ env.PURCHASE_SPREADSHEET_ID }}
+            PURCHASE_SHEET_ID= ${{ env.PURCHASE_SHEET_ID }}
+            SALES_SPREADSHEET_ID= ${{ env.SALES_SPREADSHEET_ID }}
+            SALES_SHEET_ID= ${{ env.SALES_SHEET_ID }}
+            REPORTER_SPREADSHEET_ID= ${{ env.REPORTER_SPREADSHEET_ID }}
           # NOTE: If required, update to the appropriate source folder
           source: ./
 
