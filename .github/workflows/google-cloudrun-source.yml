@@ -54,6 +54,13 @@ env:
   PROJECT_ID: realm-asgard # TODO: update Google Cloud project id
   SERVICE: bean-counter # TODO: update Cloud Run service name
   REGION: us-central1 # TODO: update Cloud Run service region
+  PORT: '${{ vars.PORT }}'
+  KEY_JSON_BASE64: '${{ secrets.KEY_JSON_BASE64 }}'
+  PURCHASE_SPREADSHEET_ID: '${{ secrets.PURCHASE_SPREADSHEET_ID }}'
+  PURCHASE_SHEET_ID: '${{ secrets.PURCHASE_SHEET_ID }}'
+  SALES_SPREADSHEET_ID: '${{ secrets.SALES_SPREADSHEET_ID }}'
+  SALES_SHEET_ID: '${{ secrets.SALES_SHEET_ID }}'
+  REPORTER_SPREADSHEET_ID: '${{ secrets.REPORTER_SPREADSHEET_ID }}'
 
 jobs:
   deploy:
@@ -85,15 +92,9 @@ jobs:
         id: deploy
         uses: google-github-actions/deploy-cloudrun@v0
         with:
+          environment: production
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
-          secrets: |
-            KEY_JSON_BASE64=google-jwt-token-spreadsheet:latest
-            PURCHASE_SPREADSHEET_ID=beancounter-PURCHASE_SPREADSHEET_ID:latest
-            PURCHASE_SHEET_ID=beancounter-PURCHASE_SHEET_ID:latest
-            SALES_SPREADSHEET_ID=beancounter-SALES_SPREADSHEET_ID:latest
-            SALES_SHEET_ID=beancounter-SALES_SHEET_ID:latest
-            REPORTER_SPREADSHEET_ID=beancounter-REPORTER_SPREADSHEET_ID:latest
           # NOTE: If required, update to the appropriate source folder
           source: ./
 
