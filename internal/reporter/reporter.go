@@ -203,8 +203,14 @@ func (r reporterImpl) GetSheetValuesToPublishReport(taxReport taxReport, month t
 }
 
 func (r reporterImpl) GeneratePDFReport(taxReport taxReport, month time.Month, year int) {
+	pdfConfig := pdf.PDFConfig{
+		LeftMargin:  12,
+		RightMargin: 12,
+		TopMargin:   10,
+		Author:      "bean counter",
+	}
 	pdfBuilder := pdf.
-		NewPDFGenerator().
+		NewPDFGenerator(pdfConfig).
 		WithHeader().
 		WithFooter().
 		AddRow("GST Report").

@@ -19,11 +19,18 @@ type PDFBuilder interface {
 	AddTable(headers []string, rows [][]interface{}, indexed bool) PDFBuilder
 }
 
-func newBuilder() core.Maroto {
+type PDFConfig struct {
+	LeftMargin  float64
+	RightMargin float64
+	TopMargin   float64
+	Author      string
+}
+
+func newBuilder(pdfConfig PDFConfig) core.Maroto {
 	cnf := config.NewBuilder().
 		WithPageNumber("Page {current} of {total}", props.RightBottom).
-		WithMargins(12, 15, 10).
-		WithAuthor("bean counter", false).
+		WithMargins(pdfConfig.LeftMargin, pdfConfig.TopMargin, pdfConfig.RightMargin).
+		WithAuthor(pdfConfig.Author, false).
 		Build()
 
 	mrt := maroto.New(cnf)
@@ -32,8 +39,8 @@ func newBuilder() core.Maroto {
 	return m
 }
 
-func NewPDFGenerator() PDFBuilder {
+func NewPDFGenerator(config PDFConfig) PDFBuilder {
 	return &pdfBuilderImpl{
-		builder: newBuilder(),
+		builder: newBuilder(config),
 	}
 }
