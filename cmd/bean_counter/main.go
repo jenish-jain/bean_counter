@@ -9,15 +9,16 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/joho/godotenv"
-	"golang.org/x/oauth2/google"
-	"google.golang.org/api/option"
-	"google.golang.org/api/sheets/v4"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/joho/godotenv"
+	"golang.org/x/oauth2/google"
+	"google.golang.org/api/option"
+	"google.golang.org/api/sheets/v4"
 )
 
 func main() {
@@ -100,6 +101,7 @@ func generateMonthlyGstReport(w http.ResponseWriter, r *http.Request) {
 	spreadsheetID := os.Getenv("REPORTER_SPREADSHEET_ID")
 	sheetsRepo.AddNewWorksheet(spreadsheetID, sheetName)
 	values := reporter.GetSheetValuesToPublishReport(taxReport, month, year)
+	reporter.GeneratePDFReport(taxReport, month, year)
 
 	sheetsRepo.WriteToSheet(spreadsheetID, sheetName, values)
 	w.WriteHeader(http.StatusCreated)

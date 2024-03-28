@@ -5,6 +5,7 @@ import (
 	"bean_counter/internal/types/tax"
 	"bean_counter/internal/types/transaction"
 	"bean_counter/pkg/files"
+	"bean_counter/pkg/utils/pdf"
 	"context"
 	"embed"
 	"encoding/json"
@@ -17,6 +18,7 @@ import (
 type Reporter interface {
 	GetTaxReportOfMonth(month time.Month, year int) taxReport
 	GetSheetValuesToPublishReport(taxReport taxReport, month time.Month, year int) [][]interface{}
+	GeneratePDFReport(taxReport taxReport, month time.Month, year int)
 }
 
 type reporterImpl struct {
@@ -198,6 +200,95 @@ func (r reporterImpl) GetSheetValuesToPublishReport(taxReport taxReport, month t
 	values = append(values, stateTaxBlock...)
 
 	return values
+}
+
+func (r reporterImpl) GeneratePDFReport(taxReport taxReport, month time.Month, year int) {
+	pdfConfig := pdf.PDFConfig{
+		LeftMargin:  12,
+		RightMargin: 12,
+		TopMargin:   10,
+		Author:      "bean counter",
+	}
+	pdfBuilder := pdf.
+		NewPDFGenerator(pdfConfig).
+		WithHeader().
+		WithFooter().
+		AddRow("GST Report").
+		AddRow("GSTIN 24ABWPJ2263R1ZW").
+		AddRow("Name Padamchand Jain c/o Jainco Textile").
+		AddRow(fmt.Sprintf("Month: %s %d", month, year)).
+		AddRow("Purchases").
+		AddRow("").
+		AddTable([]string{}, [][]interface{}{
+			{"Total Taxable Amount", taxReport.TotalPurchases.TaxableAmount},
+			{"Total C.G.S.T", taxReport.TotalPurchases.Tax.GetCGST()},
+			{"Total S.G.S.T", taxReport.TotalPurchases.Tax.GetSGST()},
+			{"Total I.G.S.T", taxReport.TotalPurchases.Tax.GetIGST()},
+			{"Total Purchases Amount with tax", taxReport.TotalPurchases.TotalAmountWithTax},
+		}, false).
+		AddRow("Input Tax amount of Purchases").
+		AddRow("").
+		AddTable([]string{}, [][]interface{}{
+			{"Total C.G.S.T", taxReport.TotalPurchases.Tax.GetCGST()},
+			{"Total S.G.S.T", taxReport.TotalPurchases.Tax.GetSGST()},
+			{"Total I.G.S.T", taxReport.TotalPurchases.Tax.GetIGST()},
+			{"Total Input Tax amount", taxReport.TotalPurchases.Tax.GetTotalTax()},
+		}, false).
+		AddRow("Sales").
+		AddRow("").
+		AddTable([]string{}, [][]interface{}{
+			{"Total Sales", taxReport.TotalSales.TotalAmountWithTax},
+			{"Total Sales with Tax amount", taxReport.TotalSales.TotalAmountWithTax},
+		}, false).
+		AddRow("Total Sales as per Following").
+		AddRow("").
+		AddTable([]string{}, [][]interface{}{
+			{"Total Taxable Amount", taxReport.TotalSales.TaxableAmount},
+			{"Total C.G.S.T", taxReport.TotalSales.Tax.GetCGST()},
+			{"Total S.G.S.T", taxReport.TotalSales.Tax.GetSGST()},
+			{"Total I.G.S.T", taxReport.TotalSales.Tax.GetIGST()},
+			{"Total Sales with tax amount", taxReport.TotalSales.TotalAmountWithTax},
+		}, false).
+		AddRow("Total payable tax amount of sales").
+		AddRow("").
+		AddTable([]string{}, [][]interface{}{
+			{"Total payable C.G.S.T", taxReport.TotalSales.Tax.GetCGST()},
+			{"Total payable S.G.S.T", taxReport.TotalSales.Tax.GetSGST()},
+			{"Total payable I.G.S.T", taxReport.TotalSales.Tax.GetIGST()},
+			{"Total payable tax amount", taxReport.TotalSales.Tax.GetTotalTax()},
+		}, false).
+		AddRow("Total payable tax liability").
+		AddRow("").
+		AddTable([]string{}, [][]interface{}{
+			{"Total input tax amount", taxReport.TotalPurchases.Tax.GetTotalTax()},
+			{"Total payable tax amount", taxReport.TotalSales.Tax.GetTotalTax()},
+			{"Total Tax Credit/ Payable", taxReport.NetTax},
+		}, false).
+		AddRow("Total payable tax as per following states").
+		AddRow("").
+		AddTable([]string{"Name of state", "I.G.S.T", "C.G.S.T", "S.G.S.T", "Total Tax"}, [][]interface{}{}, false)
+
+	tinToStateDetailsMap := getTinToStateDetailsMap()
+	for stateCode, taxBreakup := range taxReport.StateTaxBreakup {
+		payableTax := taxBreakup.PayableTax
+		if stateCode != "**" && payableTax.GetTotalTax() != 0 {
+			pdfBuilder.
+				AddTable([]string{}, [][]interface{}{
+					{tinToStateDetailsMap[stateCode].StateName, payableTax.GetIGST(), payableTax.GetCGST(), payableTax.GetSGST(), payableTax.GetTotalTax()},
+				}, false)
+		}
+	}
+	totalSalesTax := taxReport.TotalSales.Tax
+	pdfBuilder.
+		AddTable([]string{}, [][]interface{}{
+			{"TOTAL", totalSalesTax.GetIGST(), totalSalesTax.GetCGST(), totalSalesTax.GetSGST(), totalSalesTax.GetTotalTax()},
+		}, false)
+
+	err := pdfBuilder.Build()
+	if err != nil {
+		fmt.Printf("Error generating pdf %+v \n", err)
+	}
+
 }
 
 func NewReporter(invoiceService invoice.Service) Reporter {
