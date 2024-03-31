@@ -69,6 +69,8 @@ github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/
 github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/google/uuid v1.5.0 h1:1p67kYwdtXjb0gL0BPiP1Av9wiZPo5A8z2cWkTZ+eyU=
 github.com/google/uuid v1.5.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/googleapis/enterprise-certificate-proxy v0.2.3 h1:yk9/cqRKtT9wXZSsRH9aurXEpJX+U6FLtpYTdC3R06k=
 github.com/googleapis/enterprise-certificate-proxy v0.2.3/go.mod h1:AwSRAtLfXpU5Nm3pW+v7rGDHp09LsPtGY9MduiEsR9k=
 github.com/googleapis/gax-go/v2 v2.7.0 h1:IcsPKeInNvYi7eqSaDjiZqDDKu5rsmunY0Y1YupQSSQ=
@@ -77,6 +79,8 @@ github.com/jenish-jain/logger v0.1.0 h1:cyxh7iuNvUBiDop3Tc8ZZ3hgPAR8lE+xsIUyQGyZ
 github.com/jenish-jain/logger v0.1.0/go.mod h1:K/TOuV3iVN+l3/gI/nVNtC3QG1Q7foreqXhit51Wy/c=
 github.com/jenish-jain/logger v0.2.0 h1:tXYDb+Kgk40JBxojl3rDYxNxz0Z9kXHHPQZKGqOA+KE=
 github.com/jenish-jain/logger v0.2.0/go.mod h1:K/TOuV3iVN+l3/gI/nVNtC3QG1Q7foreqXhit51Wy/c=
+github.com/jenish-jain/logger v0.3.0 h1:5R1Az6krIyZobnHKt7RcwdDOQOJmtZof0hwsy+aJLLs=
+github.com/jenish-jain/logger v0.3.0/go.mod h1:HuJPjZy/L/xW++KMNAkZibQH6yhGSh/9xDhifRI+KFM=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
