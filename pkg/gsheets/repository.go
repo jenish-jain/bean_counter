@@ -2,13 +2,16 @@ package gsheets
 
 import (
 	"fmt"
-	"google.golang.org/api/sheets/v4"
 	"log"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jenish-jain/logger"
+	"google.golang.org/api/sheets/v4"
 )
 
 type Repository interface {
 	GetAllRecords(spreadSheetID string, sheetID int) [][]interface{}
-	AddNewWorksheet(spreadSheetID string, sheetName string) bool
+	AddNewWorksheet(ctx *gin.Context, spreadSheetID string, sheetName string) bool
 	WriteToSheet(spreadSheetID string, sheetName string, values [][]interface{})
 }
 
@@ -28,7 +31,7 @@ func (r repositoryImpl) GetAllRecords(spreadSheetID string, sheetID int) [][]int
 	return response.Values
 }
 
-func (r repositoryImpl) AddNewWorksheet(spreadSheetID string, sheetName string) bool {
+func (r repositoryImpl) AddNewWorksheet(ctx *gin.Context, spreadSheetID string, sheetName string) bool {
 	sheetReq := sheets.Request{
 		AddSheet: &sheets.AddSheetRequest{
 			Properties: &sheets.SheetProperties{
@@ -43,10 +46,10 @@ func (r repositoryImpl) AddNewWorksheet(spreadSheetID string, sheetName string) 
 	}
 	resp, err := r.service.Spreadsheets.BatchUpdate(spreadSheetID, &batchRequest).Do()
 	if err != nil {
-		fmt.Printf("error creating new worksheet for spreadSheetID : %s , error : %+v \n", spreadSheetID, err)
+		logger.ErrorWithCtx(ctx, "error creating new worksheet for spreadSheetID", "error", err, "spreadsheetID", spreadSheetID)
 		return false
 	}
-	fmt.Printf("successfully created new worksheet for spreadSheetID : %s , response : %+v", spreadSheetID, resp)
+	logger.InfoWithCtx(ctx, "successfully created new worksheet for spreadSheetID", spreadSheetID, "response", resp)
 	return true
 }
 

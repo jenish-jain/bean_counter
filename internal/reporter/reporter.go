@@ -5,17 +5,18 @@ import (
 	"bean_counter/internal/types/tax"
 	"bean_counter/internal/types/transaction"
 	"bean_counter/pkg/files"
-	"context"
 	"embed"
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jenish-jain/logger"
 )
 
 type Reporter interface {
-	GetTaxReportOfMonth(month time.Month, year int) taxReport
+	GetTaxReportOfMonth(ctx *gin.Context, month time.Month, year int) taxReport
 	GetSheetValuesToPublishReport(taxReport taxReport, month time.Month, year int) [][]interface{}
 }
 
@@ -46,8 +47,7 @@ type stateDetails struct {
 	StateCode string `json:"stateCode"`
 }
 
-func (r reporterImpl) GetTaxReportOfMonth(month time.Month, year int) taxReport {
-	ctx := context.Background()
+func (r reporterImpl) GetTaxReportOfMonth(ctx *gin.Context, month time.Month, year int) taxReport {
 	purchases := r.invoiceService.GetAllPurchaseInvoices(ctx)
 	sales := r.invoiceService.GetAllSalesInvoices(ctx)
 
@@ -74,9 +74,9 @@ func (r reporterImpl) GetTaxReportOfMonth(month time.Month, year int) taxReport 
 	report.Year = year
 	file, _ := json.MarshalIndent(report, "", " ")
 	if err := os.WriteFile("report.json", file, 0o644); err != nil {
-		log.Fatal(err)
+		logger.ErrorWithCtx(ctx, "error while writing report to file", "ERROR", err)
 	}
-	fmt.Printf("\n REPORT %+v \n ", report)
+	logger.InfoWithCtx(ctx, "genrated report successfully", "REPORT", report)
 	return report
 
 }
@@ -93,7 +93,6 @@ func getTinToStateDetailsMap() map[string]stateDetails {
 
 func checkAndPopulateStateTax(invoiceRecord invoice.Invoice, stateTaxMap map[string]stateTax, tinToStateDetailsMap map[string]stateDetails) map[string]stateTax {
 	stateTin := invoiceRecord.GetGstNo()[0:2]
-	fmt.Printf("\n TIN IS %s \n", stateTin)
 	if stateTin != "" || stateTin != "**" {
 		currentStateTax := stateTaxMap[stateTin]
 		currentStateTax.StateCode = tinToStateDetailsMap[stateTin].StateCode
