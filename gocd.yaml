@@ -25,7 +25,7 @@ pipelines:
             artifacts:
             - external:
                 id: push-to-cs
-                store_id: artifact-s3-store
+                store_id: google-cloud-storage
                 configuration:
                   options:
                     Destination: 'builds/'
@@ -61,7 +61,7 @@ pipelines:
             artifacts:
             - external:
                 id: push-to-cs
-                store_id: artifact-s3-store
+                store_id: google-cloud-storage
                 configuration:
                   options:
                     Destination: 'new_builds/'
