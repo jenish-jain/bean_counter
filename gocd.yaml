@@ -58,6 +58,7 @@ pipelines:
         jobs:
           fetch:
             timeout: 0
+            is_file: yes
             artifacts:
             - external:
                 id: push-to-cs
@@ -65,7 +66,7 @@ pipelines:
                 configuration:
                   options:
                     Destination: 'new_builds/'
-                    Source: builds/build.json
+                    Source: "builds"
             tasks:
             - exec:
                 arguments:
