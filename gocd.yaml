@@ -58,7 +58,7 @@ pipelines:
         jobs:
           fetch:
             timeout: 0
-            is_file: yes
+            is_file: false
             artifacts:
             - external:
                 id: push-to-cs
