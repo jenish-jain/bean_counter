@@ -21,3 +21,7 @@ Google API go client : <https://github.com/googleapis/google-api-go-client>
     "year" : 2023
 }
 ```
+
+## Blog
+
+https://medium.com/@jenishjain6/how-i-automated-tax-reporting-for-my-father-b4db1edbcbd2(https://medium.com/@jenishjain6/how-i-automated-tax-reporting-for-my-father-b4db1edbcbd2
